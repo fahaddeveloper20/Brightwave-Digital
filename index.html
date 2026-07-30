@@ -36,6 +36,31 @@
   --ease:cubic-bezier(.22,.61,.36,1);
 }
 
+[data-theme="dark"]{
+  --bg:#14171A;
+  --bg-deep:#0E1012;
+  --surface:#1B1F23;
+  --text:#F3F2EC;
+  --text-muted:#9B9C97;
+  --accent:#6FBBA0;
+  --accent-dark:#8FD3B8;
+  --accent-soft:#233530;
+  --accent-soft-2:#1C2624;
+  --line:#2B2F33;
+  --shadow-soft:0 8px 30px rgba(0,0,0,0.35);
+  --shadow-lift:0 20px 50px rgba(0,0,0,0.5);
+}
+[data-theme="dark"] .card.dark{background:#0E1012;}
+[data-theme="dark"] .nav-cta{background:var(--accent);color:#0E1012;}
+[data-theme="dark"] .nav-cta:hover{background:var(--accent-dark);}
+[data-theme="dark"] .price-card.featured,
+[data-theme="dark"] .cta-banner{background:#0E1012;}
+[data-theme="dark"] .browser-bar{background:rgba(20,23,26,0.9);}
+[data-theme="dark"] .floating-card,
+[data-theme="dark"] .hero-badge,
+[data-theme="dark"] .wave-badge{background:rgba(27,31,35,0.75);border-color:rgba(255,255,255,0.08);}
+[data-theme="dark"] .mobile-drawer{background:rgba(20,23,26,0.98);}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{
@@ -45,6 +70,10 @@ body{
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
+  transition:background .4s var(--ease), color .4s var(--ease);
+}
+body, body *{
+  transition:background-color .35s var(--ease), border-color .35s var(--ease), color .35s var(--ease);
 }
 h1,h2,h3,h4{
   font-family:'Space Grotesk',sans-serif;
@@ -165,6 +194,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   transition:background .3s var(--ease), transform .3s var(--ease);
 }
 .nav-cta:hover{background:var(--accent-dark);transform:translateY(-1px);}
+.theme-toggle{
+  width:40px;height:40px;border-radius:50%;
+  border:1px solid var(--line);
+  background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:border-color .3s var(--ease), background .3s var(--ease), transform .3s var(--ease);
+}
+.theme-toggle:hover{border-color:var(--accent);transform:translateY(-1px);}
+.theme-toggle svg{width:18px;height:18px;color:var(--text);}
+.theme-toggle .icon-moon{display:none;}
+[data-theme="dark"] .theme-toggle .icon-sun{display:none;}
+[data-theme="dark"] .theme-toggle .icon-moon{display:block;}
+
 .nav-toggle{
   display:none;position:relative;z-index:110;
   width:40px;height:40px;border-radius:10px;
@@ -479,6 +522,36 @@ body.drawer-open{overflow:hidden;}
 @media(max-width:820px){.about-grid{grid-template-columns:1fr;}}
 
 /* =========================================================
+   INSIGHTS / BLOG
+========================================================= */
+.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.insight-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);
+  overflow:hidden;display:flex;flex-direction:column;
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.insight-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lift);}
+.insight-thumb{aspect-ratio:16/10;overflow:hidden;position:relative;}
+.insight-thumb img{width:100%;height:100%;object-fit:cover;filter:saturate(.92);transition:transform .6s var(--ease);}
+.insight-card:hover .insight-thumb img{transform:scale(1.06);}
+.insight-body{padding:22px 22px 24px;display:flex;flex-direction:column;flex-grow:1;}
+.insight-tag{
+  font-family:'IBM Plex Mono';font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--accent-dark);margin-bottom:10px;
+}
+.insight-body h4{font-size:18px;margin-bottom:8px;}
+.insight-body p{font-size:14px;color:var(--text-muted);flex-grow:1;}
+.insight-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:16px;padding-top:14px;border-top:1px solid var(--line);
+  font-size:12.5px;color:var(--text-muted);
+}
+.insight-meta a{color:var(--accent-dark);font-weight:600;display:inline-flex;align-items:center;gap:6px;}
+.insight-meta a svg{width:13px;height:13px;transition:transform .25s var(--ease);}
+.insight-card:hover .insight-meta a svg{transform:translateX(3px);}
+@media(max-width:900px){.insights-grid{grid-template-columns:1fr;}}
+
+/* =========================================================
    PROCESS — wave-connected timeline
 ========================================================= */
 .process-track{position:relative;padding-top:20px;}
@@ -723,6 +796,63 @@ body.drawer-open{overflow:hidden;}
 @media(max-width:820px){.contact-grid{grid-template-columns:1fr;}}
 
 /* =========================================================
+   QUOTE MODAL
+========================================================= */
+.modal-overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(15,16,14,0.55);
+  backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  opacity:0;visibility:hidden;
+  transition:opacity .45s var(--ease), visibility .45s var(--ease), backdrop-filter .45s var(--ease);
+}
+.modal-overlay.open{opacity:1;visibility:visible;}
+.modal-card{
+  position:relative;
+  width:100%;max-width:480px;
+  max-height:88vh;overflow-y:auto;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lift);
+  padding:40px;
+  transform:translateY(28px) scale(.94);
+  opacity:0;
+  transition:transform .5s var(--ease), opacity .4s var(--ease);
+}
+.modal-overlay.open .modal-card{transform:translateY(0) scale(1);opacity:1;transition-delay:.05s;}
+.modal-close{
+  position:absolute;top:18px;right:18px;
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--line);background:var(--bg);
+  display:flex;align-items:center;justify-content:center;color:var(--text-muted);
+  transition:all .25s var(--ease);
+}
+.modal-close:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:rotate(90deg);}
+.modal-head{margin-bottom:26px;padding-right:30px;}
+.modal-head .eyebrow{margin-bottom:10px;}
+.modal-head h3{font-size:24px;}
+.modal-head p{color:var(--text-muted);font-size:14.5px;margin-top:8px;}
+.modal-card .field{
+  opacity:0;transform:translateY(10px);
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
+.modal-overlay.open .modal-card .field{opacity:1;transform:translateY(0);}
+.modal-overlay.open .modal-card .field:nth-of-type(1){transition-delay:.12s;}
+.modal-overlay.open .modal-card .field:nth-of-type(2){transition-delay:.17s;}
+.modal-overlay.open .modal-card .field:nth-of-type(3){transition-delay:.22s;}
+.modal-overlay.open .modal-card .field:nth-of-type(4){transition-delay:.27s;}
+.modal-card .btn-primary{
+  opacity:0;transform:translateY(10px);
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+  transition-delay:.32s;
+}
+.modal-overlay.open .modal-card .btn-primary{opacity:1;transform:translateY(0);}
+body.modal-open{overflow:hidden;}
+@media(max-width:480px){.modal-card{padding:30px 24px;}}
+
+/* =========================================================
    FOOTER
 ========================================================= */
 footer{background:var(--bg-deep);border-top:1px solid var(--line);padding:64px 0 28px;}
@@ -767,7 +897,13 @@ footer{background:var(--bg-deep);border-top:1px solid var(--line);padding:64px 0
       <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
     </div>
-    <a href="#contact" class="nav-cta">Get a Free Quote</a>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.6A9 9 0 1111.4 3a7 7 0 009.6 9.6z"/></svg>
+      </button>
+      <a href="#contact" class="nav-cta open-quote">Get a Free Quote</a>
+    </div>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -796,7 +932,7 @@ footer{background:var(--bg-deep);border-top:1px solid var(--line);padding:64px 0
       <h1>We build websites that <em>grow</em> your business.</h1>
       <p class="lead">Brightwave Digital designs and develops fast, conversion-focused websites for ambitious small businesses and startups — from first sketch to launch day.</p>
       <div class="hero-ctas">
-        <a href="#contact" class="btn btn-primary">Get a Free Quote →</a>
+        <a href="#contact" class="btn btn-primary open-quote">Get a Free Quote →</a>
         <a href="#work" class="btn btn-secondary">View Our Work</a>
       </div>
       <div class="hero-stats-row">
@@ -1006,8 +1142,57 @@ footer{background:var(--bg-deep);border-top:1px solid var(--line);padding:64px 0
   </div>
 </section>
 
+<!-- ============ INSIGHTS ============ -->
+<section id="insights" class="section-pad section-alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">From the blog</div>
+      <h2>Notes on building better websites.</h2>
+      <p>Short, practical write-ups from projects we've shipped — no fluff, no gated PDFs.</p>
+    </div>
+    <div class="insights-grid reveal-stagger">
+      <div class="insight-card">
+        <div class="insight-thumb"><img src="https://picsum.photos/seed/brightwave-blog-speed/500/320" alt="Website loading speed illustration" loading="lazy"></div>
+        <div class="insight-body">
+          <div class="insight-tag">Performance</div>
+          <h4>Why your site feels slow even on fast wifi</h4>
+          <p>The usual culprits aren't your hosting — they're unoptimized images and scripts loading before they're needed.</p>
+          <div class="insight-meta">
+            <span>6 min read</span>
+            <a href="#">Read more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-thumb"><img src="https://picsum.photos/seed/brightwave-blog-cms/500/320" alt="Content management dashboard illustration" loading="lazy"></div>
+        <div class="insight-body">
+          <div class="insight-tag">Content</div>
+          <h4>Choosing a CMS that your team will actually use</h4>
+          <p>The best CMS isn't the most powerful one — it's the one your team opens without dreading it.</p>
+          <div class="insight-meta">
+            <span>5 min read</span>
+            <a href="#">Read more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-thumb"><img src="https://picsum.photos/seed/brightwave-blog-conversion/500/320" alt="Website conversion rate illustration" loading="lazy"></div>
+        <div class="insight-body">
+          <div class="insight-tag">Conversion</div>
+          <h4>Five small changes that lifted one client's conversions 64%</h4>
+          <p>None of it was a redesign. It was clearer buttons, shorter forms, and one moved headline.</p>
+          <div class="insight-meta">
+            <span>7 min read</span>
+            <a href="#">Read more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ PRICING ============ -->
-<section id="pricing" class="section-pad section-alt">
+<section id="pricing" class="section-pad">
   <div class="wrap">
     <div class="section-head reveal" style="text-align:center;margin:0 auto 56px;">
       <div class="eyebrow" style="justify-content:center;">Pricing</div>
@@ -1113,7 +1298,7 @@ footer{background:var(--bg-deep);border-top:1px solid var(--line);padding:64px 0
       </svg>
       <h2>Ready to start your project?</h2>
       <p>Tell us a bit about what you're building — we'll reply within one business day with next steps.</p>
-      <a href="#contact" class="btn btn-primary">Get a Free Quote →</a>
+      <a href="#contact" class="btn btn-primary open-quote">Get a Free Quote →</a>
     </div>
   </div>
 </section>
@@ -1179,6 +1364,7 @@ footer{background:var(--bg-deep);border-top:1px solid var(--line);padding:64px 0
           <li><a href="#about">About</a></li>
           <li><a href="#process">Process</a></li>
           <li><a href="#work">Work</a></li>
+          <li><a href="#insights">Blog</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
@@ -1210,7 +1396,89 @@ footer{background:var(--bg-deep);border-top:1px solid var(--line);padding:64px 0
   </div>
 </footer>
 
+<!-- ============ QUOTE MODAL ============ -->
+<div class="modal-overlay" id="quoteModal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="quoteModalTitle">
+    <button class="modal-close" id="quoteModalClose" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-head">
+      <div class="eyebrow">Get a free quote</div>
+      <h3 id="quoteModalTitle">Tell us about your project.</h3>
+      <p>We'll reply within one business day with a rough scope and timeline.</p>
+    </div>
+    <form id="quoteForm">
+      <div class="field"><label for="qName">Name</label><input id="qName" name="name" type="text" required placeholder="Your name"></div>
+      <div class="field"><label for="qEmail">Email</label><input id="qEmail" name="email" type="email" required placeholder="you@company.com"></div>
+      <div class="field">
+        <label for="qBudget">Budget</label>
+        <select id="qBudget" name="budget">
+          <option>Under $3,000</option>
+          <option>$3,000 – $6,000</option>
+          <option>$6,000 – $15,000</option>
+          <option>$15,000+</option>
+        </select>
+      </div>
+      <div class="field"><label for="qMessage">Message</label><textarea id="qMessage" name="message" required placeholder="Tell us about your project"></textarea></div>
+      <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+  </div>
+</div>
+
 <script>
+// ---- Dark mode toggle ----
+const themeToggle = document.getElementById('themeToggle');
+function setTheme(mode){
+  if(mode === 'dark'){ document.documentElement.setAttribute('data-theme','dark'); }
+  else{ document.documentElement.removeAttribute('data-theme'); }
+}
+const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+setTheme(prefersDark ? 'dark' : 'light');
+themeToggle.addEventListener('click', () => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  setTheme(isDark ? 'light' : 'dark');
+});
+
+// ---- Quote modal ----
+const quoteModal = document.getElementById('quoteModal');
+const quoteModalClose = document.getElementById('quoteModalClose');
+let lastFocused = null;
+
+function openQuoteModal(){
+  lastFocused = document.activeElement;
+  quoteModal.classList.add('open');
+  quoteModal.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  closeDrawer();
+  setTimeout(() => { const first = quoteModal.querySelector('#qName'); if(first) first.focus(); }, 200);
+}
+function closeQuoteModal(){
+  quoteModal.classList.remove('open');
+  quoteModal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('modal-open');
+  if(lastFocused) lastFocused.focus();
+}
+document.querySelectorAll('.open-quote').forEach(el => {
+  el.addEventListener('click', (e) => { e.preventDefault(); openQuoteModal(); });
+});
+quoteModalClose.addEventListener('click', closeQuoteModal);
+quoteModal.addEventListener('click', (e) => { if(e.target === quoteModal) closeQuoteModal(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && quoteModal.classList.contains('open')) closeQuoteModal(); });
+
+document.getElementById('quoteForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const btn = this.querySelector('button[type="submit"]');
+  const original = btn.textContent;
+  btn.textContent = 'Message sent ✓';
+  btn.style.background = '#3A5F51';
+  setTimeout(() => {
+    btn.textContent = original;
+    btn.style.background = '';
+    this.reset();
+    closeQuoteModal();
+  }, 1600);
+});
+
 // ---- FAQ accordion ----
 document.querySelectorAll('.faq-item').forEach(item => {
   const btn = item.querySelector('.faq-q');
